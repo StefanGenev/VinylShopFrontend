@@ -20,16 +20,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'vynilshopapp'`, () => {
+  it(`should have as title 'vinylshopapp'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('vynilshopapp');
+    expect(app.title).toEqual('vinylshopapp');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('vynilshopapp app is running!');
+    expect(compiled.querySelector('.content span')?.textContent).toContain('vinylshopapp app is running!');
   });
 });
