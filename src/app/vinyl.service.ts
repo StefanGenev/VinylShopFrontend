@@ -7,7 +7,6 @@ import {environment} from "../environments/environment";
 @Injectable({providedIn: 'root'})
 export class VinylService {
   private apiServerUrl = environment.apiBaseUrl;
-  private defaultImageURL = 'https://1080motion.com/wp-content/uploads/2018/06/NoImageFound.jpg.png';
 
   constructor(private http: HttpClient) { }
 
@@ -16,22 +15,6 @@ export class VinylService {
   }
 
   public addVinyl(vinyl: Vinyl): Observable<Vinyl> {
-    // Image URL validation
-    const imageElement = document.createElement("img");
-
-    try {
-      imageElement.src = vinyl.imgURL;
-    } catch(err)
-    {
-      // Invalid image URL
-      // Enter default image URL
-      vinyl.imgURL = this.defaultImageURL;
-    }
-
-    if(imageElement.height <= 0) {
-      vinyl.imgURL = this.defaultImageURL;
-    }
-
     return this.http.post<any>(`${this.apiServerUrl}/vinyl/add`, vinyl)
   }
 

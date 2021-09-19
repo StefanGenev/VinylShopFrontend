@@ -2,6 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import { Vinyl     } from "./vinyl";
 import {VinylService} from "./vinyl.service";
 import {NgForm} from "@angular/forms";
+import {HttpErrorResponse} from "@angular/common/http";
+import {RegistrationService} from "./registration.service";
+import {Registration} from "./registration";
+import {LoginRequest} from "./loginRequest";
 
 @Component({
   selector: 'app-root',
@@ -13,12 +17,47 @@ export class AppComponent implements OnInit{
   public vinyls!: Vinyl[];
   public currentVinyl!: Vinyl;
   public vinylForDeletion!: Vinyl;
+  public isLoggedIn = false;
+  public loggedUsername = '';
+  public errorMessage = '';
+  public defaultImageURL = 'https://1080motion.com/wp-content/uploads/2018/06/NoImageFound.jpg.png';
 
-  constructor(private vinylService: VinylService) {}
+  constructor(private vinylService: VinylService, private registrationService: RegistrationService) {}
 
   ngOnInit() {
+    if (this.isLoggedIn)
+      this.getVinyls();
+  }
 
-    this.getVinyls();
+  public onLogin(loginRequest: LoginRequest): void{
+    this.registrationService.login(loginRequest).subscribe(
+      (response: void) =>{
+        this.isLoggedIn = true;
+        this.loggedUsername = loginRequest.email;
+        this.getVinyls();
+      },
+      (error: HttpErrorResponse) => {
+        this.errorMessage = 'Login error';
+      }
+    );
+  }
+
+  public onRegister(registration: Registration): void{
+    this.registrationService.register(registration).subscribe(res => {
+        // Login after registration
+          this.onLogin({
+              email: registration.email,
+              password: registration.password
+            });
+      },
+      (error: string) => {
+        this.errorMessage = error;
+      });
+  }
+
+  public onLogout(): void {
+    this.registrationService.logout();
+    this.isLoggedIn = false;
   }
 
   public getVinyls(): void {
@@ -113,7 +152,7 @@ export class AppComponent implements OnInit{
     this.vinyls = results;
 
     // Reset
-    if (!key)
+    if ( results.length === 0 || !key)
       this.getVinyls();
   }
 }
